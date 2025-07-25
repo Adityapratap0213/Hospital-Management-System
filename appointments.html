@@ -1,0 +1,319 @@
+<!-- Appointments Module Content -->
+<div class="module-container">
+    <div class="module-header">
+        <h1>Appointment Scheduling</h1>
+        <div class="action-bar">
+            <div class="search-container">
+                <input type="text" id="appointment-search" placeholder="Search appointments..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button id="add-appointment-btn" class="btn primary">
+                <i class="fas fa-plus"></i> Schedule Appointment
+            </button>
+            <div class="dropdown">
+                <button class="btn secondary dropdown-toggle">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" id="export-appointments-csv" class="dropdown-item">Export to CSV</a>
+                    <a href="#" id="export-appointments-excel" class="dropdown-item">Export to Excel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="module-content">
+        <div class="appointment-filters">
+            <div class="filter-group">
+                <label for="filter-date">Date:</label>
+                <input type="date" id="filter-date" class="form-control">
+            </div>
+            <div class="filter-group">
+                <label for="filter-doctor">Doctor:</label>
+                <select id="filter-doctor" class="form-control">
+                    <option value="">All Doctors</option>
+                    <!-- Doctor options will be loaded dynamically -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-status">Status:</label>
+                <select id="filter-status" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="No-show">No-show</option>
+                </select>
+            </div>
+            <button id="apply-filters" class="btn secondary">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+            <button id="clear-filters" class="btn outline">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+        
+        <table id="appointment-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Purpose</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Appointment data will be loaded here -->
+                <tr>
+                    <td colspan="8" class="text-center">Loading appointments...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Appointment Modal -->
+<div id="appointment-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="appointment-modal-title">Schedule New Appointment</h2>
+        
+        <form id="appointment-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointment-patient">Patient</label>
+                    <select id="appointment-patient" class="form-control" required>
+                        <option value="">Select Patient</option>
+                        <!-- Patient options will be loaded dynamically -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointment-doctor">Doctor</label>
+                    <select id="appointment-doctor" class="form-control" required>
+                        <option value="">Select Doctor</option>
+                        <!-- Doctor options will be loaded dynamically -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointment-date">Date</label>
+                    <input type="date" id="appointment-date" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointment-time">Time</label>
+                    <input type="time" id="appointment-time" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointment-purpose">Purpose</label>
+                    <select id="appointment-purpose" class="form-control" required>
+                        <option value="">Select Purpose</option>
+                        <option value="Consultation">Consultation</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Check-up">Check-up</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Procedure">Procedure</option>
+                        <option value="Surgery">Surgery</option>
+                        <option value="Vaccination">Vaccination</option>
+                        <option value="Lab Test">Lab Test</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointment-status">Status</label>
+                    <select id="appointment-status" class="form-control" required>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="No-show">No-show</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="appointment-notes">Notes</label>
+                <textarea id="appointment-notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn secondary close-modal-btn">Cancel</button>
+                <button type="submit" class="btn primary">Save Appointment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Appointment View Modal -->
+<div id="appointment-view-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Appointment Details</h2>
+        
+        <div class="appointment-details">
+            <div class="appointment-header">
+                <div class="appointment-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="appointment-info">
+                    <h3 id="view-appointment-id"></h3>
+                    <p id="view-appointment-datetime"></p>
+                </div>
+                <div class="appointment-status" id="view-appointment-status-badge">
+                    <span>Scheduled</span>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Appointment Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Patient</span>
+                        <span class="detail-value" id="view-appointment-patient"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Doctor</span>
+                        <span class="detail-value" id="view-appointment-doctor"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Purpose</span>
+                        <span class="detail-value" id="view-appointment-purpose"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value" id="view-appointment-status"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Notes</h4>
+                <div class="details-grid">
+                    <div class="detail-item full-width">
+                        <span class="detail-value" id="view-appointment-notes"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="btn secondary close-modal-btn">Close</button>
+            <button type="button" class="btn primary" id="edit-appointment-from-view-btn">Edit</button>
+            <button type="button" class="btn danger" id="cancel-appointment-btn">Cancel Appointment</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dropdown = this.nextElementSibling;
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.matches('.dropdown-toggle')) {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Set up appointment form submission
+        const appointmentForm = document.getElementById('appointment-form');
+        if (appointmentForm) {
+            appointmentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveAppointment();
+            });
+        }
+        
+        // Set up add appointment button
+        const addAppointmentBtn = document.getElementById('add-appointment-btn');
+        if (addAppointmentBtn) {
+            addAppointmentBtn.addEventListener('click', function() {
+                openModal('appointment-modal', 'Schedule New Appointment');
+                document.getElementById('appointment-form').reset();
+                document.getElementById('appointment-form').removeAttribute('data-id');
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('appointment-date').value = today;
+                
+                // Set default status to Scheduled
+                document.getElementById('appointment-status').value = 'Scheduled';
+            });
+        }
+        
+        // Set up edit from view button
+        const editFromViewBtn = document.getElementById('edit-appointment-from-view-btn');
+        if (editFromViewBtn) {
+            editFromViewBtn.addEventListener('click', function() {
+                const appointmentId = document.getElementById('view-appointment-id').textContent.replace('Appointment ID: ', '');
+                document.getElementById('appointment-view-modal').classList.remove('active');
+                document.getElementById('modal-container').classList.remove('active');
+                editAppointment(appointmentId);
+            });
+        }
+        
+        // Set up cancel appointment button
+        const cancelAppointmentBtn = document.getElementById('cancel-appointment-btn');
+        if (cancelAppointmentBtn) {
+            cancelAppointmentBtn.addEventListener('click', function() {
+                const appointmentId = document.getElementById('view-appointment-id').textContent.replace('Appointment ID: ', '');
+                cancelAppointment(appointmentId);
+            });
+        }
+        
+        // Set up filter buttons
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', function() {
+                applyAppointmentFilters();
+            });
+        }
+        
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                clearAppointmentFilters();
+            });
+        }
+        
+        // Set up export buttons
+        const exportCsvBtn = document.getElementById('export-appointments-csv');
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportAppointmentsToCSV();
+            });
+        }
+        
+        const exportExcelBtn = document.getElementById('export-appointments-excel');
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportAppointmentsToExcel();
+            });
+        }
+    });
+</script>

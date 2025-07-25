@@ -1,0 +1,163 @@
+<!-- Dashboard Content -->
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <div class="date-display">
+            <i class="fas fa-calendar-alt"></i>
+            <span id="current-date"></span>
+        </div>
+    </div>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon patients">
+                <i class="fas fa-user-injured"></i>
+            </div>
+            <div class="stat-details">
+                <h3>Patients</h3>
+                <p id="patient-count">0</p>
+                <span class="stat-label">Total Patients</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon appointments">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-details">
+                <h3>Appointments</h3>
+                <p id="appointment-count">0</p>
+                <span class="stat-label">Today's Appointments</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon doctors">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <div class="stat-details">
+                <h3>Doctors</h3>
+                <p id="doctor-count">0</p>
+                <span class="stat-label">Available Doctors</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon revenue">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-details">
+                <h3>Revenue</h3>
+                <p id="revenue-amount">$0.00</p>
+                <span class="stat-label">This Month</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-section appointments-section">
+            <div class="section-header">
+                <h2>Today's Appointments</h2>
+                <button class="btn primary" onclick="loadModule('appointments')">View All</button>
+            </div>
+            <div class="section-content">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="today-appointments">
+                        <tr>
+                            <td colspan="5" class="text-center">No appointments for today</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="dashboard-section patients-section">
+            <div class="section-header">
+                <h2>Recent Patients</h2>
+                <button class="btn primary" onclick="loadModule('patients')">View All</button>
+            </div>
+            <div class="section-content">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>Last Visit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-patients">
+                        <tr>
+                            <td colspan="4" class="text-center">No recent patients</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-bottom">
+        <div class="dashboard-section activity-section">
+            <div class="section-header">
+                <h2>Recent Activities</h2>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list" id="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="activity-details">
+                            <p>No recent activities</p>
+                            <span class="activity-time"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="dashboard-section billing-section">
+            <div class="section-header">
+                <h2>Recent Billing</h2>
+                <button class="btn primary" onclick="loadModule('billing')">View All</button>
+            </div>
+            <div class="section-content">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-billing">
+                        <tr>
+                            <td colspan="4" class="text-center">No recent billing</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set current date
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentDateElement = document.getElementById('current-date');
+        if (currentDateElement) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateElement.textContent = new Date().toLocaleDateString(undefined, options);
+        }
+    });
+</script>

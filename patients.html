@@ -1,0 +1,313 @@
+<!-- Patients Module Content -->
+<div class="module-container">
+    <div class="module-header">
+        <h1>Patient Management</h1>
+        <div class="action-bar">
+            <div class="search-container">
+                <input type="text" id="patient-search" placeholder="Search patients..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button id="add-patient-btn" class="btn primary">
+                <i class="fas fa-plus"></i> Add Patient
+            </button>
+            <div class="dropdown">
+                <button class="btn secondary dropdown-toggle">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" id="export-patients-csv" class="dropdown-item">Export to CSV</a>
+                    <a href="#" id="export-patients-excel" class="dropdown-item">Export to Excel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="module-content">
+        <table id="patient-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Last Visit</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Patient data will be loaded here -->
+                <tr>
+                    <td colspan="8" class="text-center">Loading patients...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Patient Modal -->
+<div id="patient-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="patient-modal-title">Add New Patient</h2>
+        
+        <form id="patient-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient-name">Full Name</label>
+                    <input type="text" id="patient-name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-gender">Gender</label>
+                    <select id="patient-gender" class="form-control" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient-dob">Date of Birth</label>
+                    <input type="date" id="patient-dob" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-contact">Contact Number</label>
+                    <input type="tel" id="patient-contact" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient-email">Email Address</label>
+                    <input type="email" id="patient-email" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-blood">Blood Group</label>
+                    <select id="patient-blood" class="form-control">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="patient-address">Address</label>
+                <textarea id="patient-address" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient-emergency-contact">Emergency Contact</label>
+                    <input type="tel" id="patient-emergency-contact" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-emergency-relation">Relationship</label>
+                    <input type="text" id="patient-emergency-relation" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="patient-medical-history">Medical History</label>
+                <textarea id="patient-medical-history" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="patient-allergies">Allergies</label>
+                <textarea id="patient-allergies" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn secondary close-modal-btn">Cancel</button>
+                <button type="submit" class="btn primary">Save Patient</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Patient View Modal -->
+<div id="patient-view-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Patient Details</h2>
+        
+        <div class="patient-details">
+            <div class="patient-header">
+                <div class="patient-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="patient-info">
+                    <h3 id="view-patient-name"></h3>
+                    <p id="view-patient-id"></p>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Personal Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Gender</span>
+                        <span class="detail-value" id="view-patient-gender"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date of Birth</span>
+                        <span class="detail-value" id="view-patient-dob"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Age</span>
+                        <span class="detail-value" id="view-patient-age"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Blood Group</span>
+                        <span class="detail-value" id="view-patient-blood"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Contact Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Phone</span>
+                        <span class="detail-value" id="view-patient-contact"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value" id="view-patient-email"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Address</span>
+                        <span class="detail-value" id="view-patient-address"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Emergency Contact</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Contact</span>
+                        <span class="detail-value" id="view-patient-emergency-contact"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Relationship</span>
+                        <span class="detail-value" id="view-patient-emergency-relation"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Medical Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item full-width">
+                        <span class="detail-label">Medical History</span>
+                        <span class="detail-value" id="view-patient-medical-history"></span>
+                    </div>
+                    <div class="detail-item full-width">
+                        <span class="detail-label">Allergies</span>
+                        <span class="detail-value" id="view-patient-allergies"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Visit History</h4>
+                <div id="patient-visits">
+                    <p>No visit history available</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="btn secondary close-modal-btn">Close</button>
+            <button type="button" class="btn primary" id="edit-from-view-btn">Edit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dropdown = this.nextElementSibling;
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.matches('.dropdown-toggle')) {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Set up patient form submission
+        const patientForm = document.getElementById('patient-form');
+        if (patientForm) {
+            patientForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePatient();
+            });
+        }
+        
+        // Set up add patient button
+        const addPatientBtn = document.getElementById('add-patient-btn');
+        if (addPatientBtn) {
+            addPatientBtn.addEventListener('click', function() {
+                openModal('patient-modal', 'Add New Patient');
+                document.getElementById('patient-form').reset();
+                document.getElementById('patient-form').removeAttribute('data-id');
+            });
+        }
+        
+        // Set up edit from view button
+        const editFromViewBtn = document.getElementById('edit-from-view-btn');
+        if (editFromViewBtn) {
+            editFromViewBtn.addEventListener('click', function() {
+                const patientId = document.getElementById('view-patient-id').textContent.replace('ID: ', '');
+                document.getElementById('patient-view-modal').classList.remove('active');
+                document.getElementById('modal-container').classList.remove('active');
+                editPatient(patientId);
+            });
+        }
+        
+        // Set up export buttons
+        const exportCsvBtn = document.getElementById('export-patients-csv');
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportPatientsToCSV();
+            });
+        }
+        
+        const exportExcelBtn = document.getElementById('export-patients-excel');
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportPatientsToExcel();
+            });
+        }
+    });
+</script>

@@ -1,0 +1,219 @@
+<!-- Reports Module Content -->
+<div class="reports-container">
+    <div class="report-generator">
+        <h2>Generate Report</h2>
+        <form id="report-form" class="report-form">
+            <div class="form-group">
+                <label for="report-type">Report Type</label>
+                <select id="report-type" class="form-control" required>
+                    <option value="patient">Patient Report</option>
+                    <option value="appointment">Appointment Report</option>
+                    <option value="billing">Billing Report</option>
+                    <option value="staff">Staff Report</option>
+                    <option value="financial">Financial Report</option>
+                </select>
+            </div>
+            
+            <div id="date-range-container" class="form-group">
+                <label>Date Range</label>
+                <div class="date-range-container">
+                    <div>
+                        <input type="date" id="start-date" class="form-control" required>
+                    </div>
+                    <div>
+                        <input type="date" id="end-date" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="specific-options-container" class="form-group">
+                <!-- This will be populated dynamically based on report type -->
+            </div>
+            
+            <div class="report-actions">
+                <button type="button" id="generate-report-btn" class="btn primary">Generate Report</button>
+                <button type="button" id="export-csv-btn" class="btn secondary">Export to CSV</button>
+                <button type="button" id="export-excel-btn" class="btn secondary">Export to Excel</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="report-templates">
+        <h2>Report Templates</h2>
+        <div class="templates-grid">
+            <div class="template-card" data-type="patient" data-template="monthly-patient">
+                <div class="template-icon">
+                    <i class="fas fa-user-injured"></i>
+                </div>
+                <div class="template-name">Monthly Patient Summary</div>
+                <div class="template-description">Overview of patient statistics for the current month</div>
+            </div>
+            
+            <div class="template-card" data-type="appointment" data-template="weekly-appointments">
+                <div class="template-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="template-name">Weekly Appointments</div>
+                <div class="template-description">Summary of appointments for the current week</div>
+            </div>
+            
+            <div class="template-card" data-type="billing" data-template="revenue-summary">
+                <div class="template-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="template-name">Revenue Summary</div>
+                <div class="template-description">Financial overview of the current month</div>
+            </div>
+            
+            <div class="template-card" data-type="staff" data-template="staff-performance">
+                <div class="template-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="template-name">Staff Performance</div>
+                <div class="template-description">Doctor appointment and patient statistics</div>
+            </div>
+            
+            <div class="template-card" data-type="financial" data-template="quarterly-finance">
+                <div class="template-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="template-name">Quarterly Financial Report</div>
+                <div class="template-description">Detailed financial analysis for the quarter</div>
+            </div>
+            
+            <div class="template-card" data-type="patient" data-template="patient-demographics">
+                <div class="template-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="template-name">Patient Demographics</div>
+                <div class="template-description">Age, gender, and location analysis</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="recent-reports">
+        <h2>Recent Reports</h2>
+        <table class="reports-table">
+            <thead>
+                <tr>
+                    <th>Report Name</th>
+                    <th>Type</th>
+                    <th>Generated On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="recent-reports-table">
+                <!-- This will be populated dynamically -->
+                <tr>
+                    <td colspan="4" class="text-center">No recent reports</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Initialize Reports Module -->
+<script>
+    // Initialize the reports module when this content is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default dates for the report form
+        const today = new Date();
+        const lastMonth = new Date();
+        lastMonth.setMonth(today.getMonth() - 1);
+        
+        document.getElementById('start-date').valueAsDate = lastMonth;
+        document.getElementById('end-date').valueAsDate = today;
+        
+        // Initialize reports module
+        if (typeof initReports === 'function') {
+            initReports();
+        }
+        
+        // Set up template card click handlers
+        const templateCards = document.querySelectorAll('.template-card');
+        templateCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const reportType = this.getAttribute('data-type');
+                const templateName = this.getAttribute('data-template');
+                loadReportTemplate(reportType, templateName);
+            });
+        });
+    });
+    
+    // Load report template
+    function loadReportTemplate(reportType, templateName) {
+        // Set the report type in the dropdown
+        const reportTypeSelect = document.getElementById('report-type');
+        reportTypeSelect.value = reportType;
+        
+        // Trigger the change event to update the specific options
+        const event = new Event('change');
+        reportTypeSelect.dispatchEvent(event);
+        
+        // Set date range based on template
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const today = new Date();
+        
+        switch(templateName) {
+            case 'monthly-patient':
+            case 'revenue-summary':
+                // Current month
+                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                startDateInput.valueAsDate = firstDayOfMonth;
+                endDateInput.valueAsDate = today;
+                break;
+                
+            case 'weekly-appointments':
+                // Current week
+                const firstDayOfWeek = new Date(today);
+                const day = today.getDay();
+                const diff = today.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+                firstDayOfWeek.setDate(diff);
+                startDateInput.valueAsDate = firstDayOfWeek;
+                endDateInput.valueAsDate = today;
+                break;
+                
+            case 'quarterly-finance':
+                // Current quarter
+                const quarter = Math.floor(today.getMonth() / 3);
+                const firstDayOfQuarter = new Date(today.getFullYear(), quarter * 3, 1);
+                startDateInput.valueAsDate = firstDayOfQuarter;
+                endDateInput.valueAsDate = today;
+                break;
+                
+            case 'patient-demographics':
+            case 'staff-performance':
+                // Last 6 months
+                const sixMonthsAgo = new Date(today);
+                sixMonthsAgo.setMonth(today.getMonth() - 6);
+                startDateInput.valueAsDate = sixMonthsAgo;
+                endDateInput.valueAsDate = today;
+                break;
+        }
+        
+        // Set specific options based on template
+        setTimeout(() => {
+            switch(templateName) {
+                case 'revenue-summary':
+                case 'quarterly-finance':
+                    const financialType = document.getElementById('financial-type');
+                    if (financialType) financialType.value = 'revenue';
+                    
+                    const financialGrouping = document.getElementById('financial-grouping');
+                    if (financialGrouping) {
+                        financialGrouping.value = templateName === 'quarterly-finance' ? 'month' : 'week';
+                    }
+                    break;
+                    
+                case 'staff-performance':
+                    const staffRole = document.getElementById('staff-role');
+                    if (staffRole) staffRole.value = 'doctor';
+                    break;
+            }
+            
+            // Generate the report
+            document.getElementById('generate-report-btn').click();
+        }, 100);
+    }
+</script>

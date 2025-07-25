@@ -1,0 +1,451 @@
+<!-- Staff Module Content -->
+<div class="module-container">
+    <div class="module-header">
+        <h1>Staff Management</h1>
+        <div class="action-bar">
+            <div class="search-container">
+                <input type="text" id="staff-search" placeholder="Search staff..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button id="add-staff-btn" class="btn primary">
+                <i class="fas fa-plus"></i> Add Staff
+            </button>
+            <div class="dropdown">
+                <button class="btn secondary dropdown-toggle">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" id="export-staff-csv" class="dropdown-item">Export to CSV</a>
+                    <a href="#" id="export-staff-excel" class="dropdown-item">Export to Excel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="module-content">
+        <div class="staff-filters">
+            <div class="filter-group">
+                <label for="filter-role">Role:</label>
+                <select id="filter-role" class="form-control">
+                    <option value="">All Roles</option>
+                    <option value="Doctor">Doctors</option>
+                    <option value="Nurse">Nurses</option>
+                    <option value="Receptionist">Receptionists</option>
+                    <option value="Lab Technician">Lab Technicians</option>
+                    <option value="Pharmacist">Pharmacists</option>
+                    <option value="Administrator">Administrators</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-department">Department:</label>
+                <select id="filter-department" class="form-control">
+                    <option value="">All Departments</option>
+                    <option value="General Medicine">General Medicine</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Gynecology">Gynecology</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Ophthalmology">Ophthalmology</option>
+                    <option value="ENT">ENT</option>
+                    <option value="Psychiatry">Psychiatry</option>
+                    <option value="Radiology">Radiology</option>
+                    <option value="Laboratory">Laboratory</option>
+                    <option value="Pharmacy">Pharmacy</option>
+                    <option value="Administration">Administration</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-status">Status:</label>
+                <select id="filter-status" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="On Leave">On Leave</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <button id="apply-filters" class="btn secondary">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+            <button id="clear-filters" class="btn outline">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+        
+        <table id="staff-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Staff data will be loaded here -->
+                <tr>
+                    <td colspan="8" class="text-center">Loading staff...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Staff Modal -->
+<div id="staff-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="staff-modal-title">Add New Staff</h2>
+        
+        <form id="staff-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staff-name">Full Name</label>
+                    <input type="text" id="staff-name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff-gender">Gender</label>
+                    <select id="staff-gender" class="form-control" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staff-role">Role</label>
+                    <select id="staff-role" class="form-control" required>
+                        <option value="">Select Role</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Nurse">Nurse</option>
+                        <option value="Receptionist">Receptionist</option>
+                        <option value="Lab Technician">Lab Technician</option>
+                        <option value="Pharmacist">Pharmacist</option>
+                        <option value="Administrator">Administrator</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff-department">Department</label>
+                    <select id="staff-department" class="form-control" required>
+                        <option value="">Select Department</option>
+                        <option value="General Medicine">General Medicine</option>
+                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Neurology">Neurology</option>
+                        <option value="Orthopedics">Orthopedics</option>
+                        <option value="Gynecology">Gynecology</option>
+                        <option value="Dermatology">Dermatology</option>
+                        <option value="Ophthalmology">Ophthalmology</option>
+                        <option value="ENT">ENT</option>
+                        <option value="Psychiatry">Psychiatry</option>
+                        <option value="Radiology">Radiology</option>
+                        <option value="Laboratory">Laboratory</option>
+                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="Administration">Administration</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staff-contact">Contact Number</label>
+                    <input type="tel" id="staff-contact" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff-email">Email Address</label>
+                    <input type="email" id="staff-email" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staff-dob">Date of Birth</label>
+                    <input type="date" id="staff-dob" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff-join-date">Join Date</label>
+                    <input type="date" id="staff-join-date" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staff-qualification">Qualification</label>
+                    <input type="text" id="staff-qualification" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff-specialization">Specialization</label>
+                    <input type="text" id="staff-specialization" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staff-status">Status</label>
+                    <select id="staff-status" class="form-control" required>
+                        <option value="Active">Active</option>
+                        <option value="On Leave">On Leave</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff-salary">Salary</label>
+                    <input type="number" id="staff-salary" class="form-control" min="0" step="0.01">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="staff-address">Address</label>
+                <textarea id="staff-address" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="staff-notes">Notes</label>
+                <textarea id="staff-notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn secondary close-modal-btn">Cancel</button>
+                <button type="submit" class="btn primary">Save Staff</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Staff View Modal -->
+<div id="staff-view-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Staff Details</h2>
+        
+        <div class="staff-details">
+            <div class="staff-header">
+                <div class="staff-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="staff-info">
+                    <h3 id="view-staff-name"></h3>
+                    <p id="view-staff-id"></p>
+                </div>
+                <div class="staff-status" id="view-staff-status-badge">
+                    <span>Active</span>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Personal Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Gender</span>
+                        <span class="detail-value" id="view-staff-gender"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date of Birth</span>
+                        <span class="detail-value" id="view-staff-dob"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Contact</span>
+                        <span class="detail-value" id="view-staff-contact"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value" id="view-staff-email"></span>
+                    </div>
+                    <div class="detail-item full-width">
+                        <span class="detail-label">Address</span>
+                        <span class="detail-value" id="view-staff-address"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Professional Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Role</span>
+                        <span class="detail-value" id="view-staff-role"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Department</span>
+                        <span class="detail-value" id="view-staff-department"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Join Date</span>
+                        <span class="detail-value" id="view-staff-join-date"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value" id="view-staff-status"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Qualification</span>
+                        <span class="detail-value" id="view-staff-qualification"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Specialization</span>
+                        <span class="detail-value" id="view-staff-specialization"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>Additional Information</h4>
+                <div class="details-grid">
+                    <div class="detail-item full-width">
+                        <span class="detail-label">Notes</span>
+                        <span class="detail-value" id="view-staff-notes"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="btn secondary close-modal-btn">Close</button>
+            <button type="button" class="btn primary" id="edit-from-view-btn">Edit</button>
+            <button type="button" class="btn danger" id="deactivate-staff-btn">Deactivate</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dropdown = this.nextElementSibling;
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.matches('.dropdown-toggle')) {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Set up staff form submission
+        const staffForm = document.getElementById('staff-form');
+        if (staffForm) {
+            staffForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveStaff();
+            });
+        }
+        
+        // Set up add staff button
+        const addStaffBtn = document.getElementById('add-staff-btn');
+        if (addStaffBtn) {
+            addStaffBtn.addEventListener('click', function() {
+                openModal('staff-modal', 'Add New Staff');
+                document.getElementById('staff-form').reset();
+                document.getElementById('staff-form').removeAttribute('data-id');
+                
+                // Set default join date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('staff-join-date').value = today;
+                
+                // Set default status to Active
+                document.getElementById('staff-status').value = 'Active';
+            });
+        }
+        
+        // Set up edit from view button
+        const editFromViewBtn = document.getElementById('edit-from-view-btn');
+        if (editFromViewBtn) {
+            editFromViewBtn.addEventListener('click', function() {
+                const staffId = document.getElementById('view-staff-id').textContent.replace('ID: ', '');
+                document.getElementById('staff-view-modal').classList.remove('active');
+                document.getElementById('modal-container').classList.remove('active');
+                editStaff(staffId);
+            });
+        }
+        
+        // Set up deactivate staff button
+        const deactivateStaffBtn = document.getElementById('deactivate-staff-btn');
+        if (deactivateStaffBtn) {
+            deactivateStaffBtn.addEventListener('click', function() {
+                const staffId = document.getElementById('view-staff-id').textContent.replace('ID: ', '');
+                deactivateStaff(staffId);
+            });
+        }
+        
+        // Set up filter buttons
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', function() {
+                applyStaffFilters();
+            });
+        }
+        
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                clearStaffFilters();
+            });
+        }
+        
+        // Set up export buttons
+        const exportCsvBtn = document.getElementById('export-staff-csv');
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportStaffToCSV();
+            });
+        }
+        
+        const exportExcelBtn = document.getElementById('export-staff-excel');
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportStaffToExcel();
+            });
+        }
+        
+        // Role-specific field visibility
+        const staffRoleSelect = document.getElementById('staff-role');
+        if (staffRoleSelect) {
+            staffRoleSelect.addEventListener('change', function() {
+                updateFieldsBasedOnRole(this.value);
+            });
+        }
+    });
+    
+    // Function to update form fields based on selected role
+    function updateFieldsBasedOnRole(role) {
+        const specializationField = document.getElementById('staff-specialization').parentElement;
+        const qualificationField = document.getElementById('staff-qualification').parentElement;
+        
+        if (role === 'Doctor') {
+            specializationField.style.display = 'block';
+            qualificationField.style.display = 'block';
+        } else if (role === 'Nurse' || role === 'Lab Technician' || role === 'Pharmacist') {
+            specializationField.style.display = 'none';
+            qualificationField.style.display = 'block';
+        } else {
+            specializationField.style.display = 'none';
+            qualificationField.style.display = 'none';
+        }
+    }
+</script>

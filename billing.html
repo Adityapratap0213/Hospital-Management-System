@@ -1,0 +1,808 @@
+<!-- Billing Module Content -->
+<div class="module-container">
+    <div class="module-header">
+        <h1>Billing & Payments</h1>
+        <div class="action-bar">
+            <div class="search-container">
+                <input type="text" id="billing-search" placeholder="Search bills..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button id="add-billing-btn" class="btn primary">
+                <i class="fas fa-plus"></i> Create New Bill
+            </button>
+            <div class="dropdown">
+                <button class="btn secondary dropdown-toggle">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" id="export-billing-csv" class="dropdown-item">Export to CSV</a>
+                    <a href="#" id="export-billing-excel" class="dropdown-item">Export to Excel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="module-content">
+        <div class="billing-filters">
+            <div class="filter-group">
+                <label for="filter-date-from">From:</label>
+                <input type="date" id="filter-date-from" class="form-control">
+            </div>
+            <div class="filter-group">
+                <label for="filter-date-to">To:</label>
+                <input type="date" id="filter-date-to" class="form-control">
+            </div>
+            <div class="filter-group">
+                <label for="filter-status">Status:</label>
+                <select id="filter-status" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Overdue">Overdue</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <button id="apply-filters" class="btn secondary">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+            <button id="clear-filters" class="btn outline">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+        
+        <table id="billing-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>Bill #</th>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Services</th>
+                    <th>Total Amount</th>
+                    <th>Paid Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Billing data will be loaded here -->
+                <tr>
+                    <td colspan="8" class="text-center">Loading bills...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Billing Modal -->
+<div id="billing-modal" class="modal">
+    <div class="modal-content wide-modal">
+        <span class="close-modal">&times;</span>
+        <h2 id="billing-modal-title">Create New Bill</h2>
+        
+        <form id="billing-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="billing-patient">Patient</label>
+                    <select id="billing-patient" class="form-control" required>
+                        <option value="">Select Patient</option>
+                        <!-- Patient options will be loaded dynamically -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="billing-date">Bill Date</label>
+                    <input type="date" id="billing-date" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="billing-doctor">Doctor</label>
+                    <select id="billing-doctor" class="form-control">
+                        <option value="">Select Doctor (Optional)</option>
+                        <!-- Doctor options will be loaded dynamically -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Services</label>
+                <div class="services-container">
+                    <table class="services-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-tbody">
+                            <!-- Service rows will be added here -->
+                            <tr class="service-row">
+                                <td>
+                                    <select class="form-control service-name" required>
+                                        <option value="">Select Service</option>
+                                        <option value="Consultation">Consultation</option>
+                                        <option value="Lab Test">Lab Test</option>
+                                        <option value="X-Ray">X-Ray</option>
+                                        <option value="MRI Scan">MRI Scan</option>
+                                        <option value="CT Scan">CT Scan</option>
+                                        <option value="Ultrasound">Ultrasound</option>
+                                        <option value="ECG">ECG</option>
+                                        <option value="Vaccination">Vaccination</option>
+                                        <option value="Surgery">Surgery</option>
+                                        <option value="Medication">Medication</option>
+                                        <option value="Physical Therapy">Physical Therapy</option>
+                                        <option value="Dental Procedure">Dental Procedure</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control service-description">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control service-quantity" value="1" min="1" required>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control service-price" value="0.00" min="0" step="0.01" required>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control service-amount" value="0.00" readonly>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn danger remove-service-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" id="add-service-btn" class="btn secondary">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+            </div>
+            
+            <div class="billing-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="billing-subtotal">$0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax (%):</span>
+                    <div class="tax-input">
+                        <input type="number" id="billing-tax-rate" class="form-control" value="0" min="0" max="100">
+                        <span id="billing-tax-amount">$0.00</span>
+                    </div>
+                </div>
+                <div class="summary-row">
+                    <span>Discount (%):</span>
+                    <div class="discount-input">
+                        <input type="number" id="billing-discount-rate" class="form-control" value="0" min="0" max="100">
+                        <span id="billing-discount-amount">$0.00</span>
+                    </div>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="billing-total">$0.00</span>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="billing-payment-method">Payment Method</label>
+                    <select id="billing-payment-method" class="form-control">
+                        <option value="">Select Payment Method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Insurance">Insurance</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Mobile Payment">Mobile Payment</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="billing-paid-amount">Paid Amount</label>
+                    <input type="number" id="billing-paid-amount" class="form-control" value="0.00" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="billing-status">Status</label>
+                    <select id="billing-status" class="form-control" required>
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                        <option value="Overdue">Overdue</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="billing-notes">Notes</label>
+                <textarea id="billing-notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn secondary close-modal-btn">Cancel</button>
+                <button type="submit" class="btn primary">Save Bill</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bill View Modal -->
+<div id="bill-view-modal" class="modal">
+    <div class="modal-content wide-modal">
+        <span class="close-modal">&times;</span>
+        <div class="bill-view-header">
+            <h2>Bill Details</h2>
+            <div class="bill-actions">
+                <button id="print-bill-btn" class="btn secondary">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button id="edit-bill-btn" class="btn primary">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </div>
+        </div>
+        
+        <div id="bill-printable-area" class="bill-details">
+            <div class="bill-header">
+                <div class="hospital-info">
+                    <h2>Hospital Management System</h2>
+                    <p>123 Hospital Street, Medical City</p>
+                    <p>Phone: (123) 456-7890 | Email: info@hospital.com</p>
+                </div>
+                <div class="bill-info">
+                    <h3>INVOICE</h3>
+                    <p><strong>Bill #:</strong> <span id="view-bill-id"></span></p>
+                    <p><strong>Date:</strong> <span id="view-bill-date"></span></p>
+                    <p><strong>Status:</strong> <span id="view-bill-status"></span></p>
+                </div>
+            </div>
+            
+            <div class="bill-patient-info">
+                <div class="patient-details">
+                    <h4>Patient Information</h4>
+                    <p><strong>Name:</strong> <span id="view-bill-patient-name"></span></p>
+                    <p><strong>ID:</strong> <span id="view-bill-patient-id"></span></p>
+                    <p><strong>Contact:</strong> <span id="view-bill-patient-contact"></span></p>
+                </div>
+                <div class="doctor-details">
+                    <h4>Doctor Information</h4>
+                    <p><strong>Name:</strong> <span id="view-bill-doctor-name"></span></p>
+                    <p><strong>Department:</strong> <span id="view-bill-doctor-department"></span></p>
+                </div>
+            </div>
+            
+            <div class="bill-services">
+                <h4>Services</h4>
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="view-services-tbody">
+                        <!-- Service rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bill-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="view-bill-subtotal"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax:</span>
+                    <span id="view-bill-tax"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Discount:</span>
+                    <span id="view-bill-discount"></span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="view-bill-total"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Paid Amount:</span>
+                    <span id="view-bill-paid"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Balance Due:</span>
+                    <span id="view-bill-balance"></span>
+                </div>
+            </div>
+            
+            <div class="bill-payment-info">
+                <p><strong>Payment Method:</strong> <span id="view-bill-payment-method"></span></p>
+                <p><strong>Notes:</strong> <span id="view-bill-notes"></span></p>
+            </div>
+            
+            <div class="bill-footer">
+                <p>Thank you for choosing our services!</p>
+                <p>For any queries regarding this bill, please contact our billing department.</p>
+            </div>
+        </div>
+        
+        <div class="form-actions non-printable">
+            <button type="button" class="btn secondary close-modal-btn">Close</button>
+            <button type="button" class="btn success" id="record-payment-btn">Record Payment</button>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="payment-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Record Payment</h2>
+        
+        <form id="payment-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="payment-bill-id">Bill #</label>
+                    <input type="text" id="payment-bill-id" class="form-control" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment-date">Payment Date</label>
+                    <input type="date" id="payment-date" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="payment-total-amount">Total Amount</label>
+                    <input type="number" id="payment-total-amount" class="form-control" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment-paid-amount">Previously Paid</label>
+                    <input type="number" id="payment-paid-amount" class="form-control" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment-balance">Balance Due</label>
+                    <input type="number" id="payment-balance" class="form-control" readonly>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="payment-amount">Payment Amount</label>
+                    <input type="number" id="payment-amount" class="form-control" min="0.01" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment-method">Payment Method</label>
+                    <select id="payment-method" class="form-control" required>
+                        <option value="">Select Payment Method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Insurance">Insurance</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Mobile Payment">Mobile Payment</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment-notes">Notes</label>
+                <textarea id="payment-notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn secondary close-modal-btn">Cancel</button>
+                <button type="submit" class="btn primary">Save Payment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dropdown = this.nextElementSibling;
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.matches('.dropdown-toggle')) {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Set up billing form submission
+        const billingForm = document.getElementById('billing-form');
+        if (billingForm) {
+            billingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveBill();
+            });
+        }
+        
+        // Set up payment form submission
+        const paymentForm = document.getElementById('payment-form');
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePayment();
+            });
+        }
+        
+        // Set up add billing button
+        const addBillingBtn = document.getElementById('add-billing-btn');
+        if (addBillingBtn) {
+            addBillingBtn.addEventListener('click', function() {
+                openModal('billing-modal', 'Create New Bill');
+                document.getElementById('billing-form').reset();
+                document.getElementById('billing-form').removeAttribute('data-id');
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('billing-date').value = today;
+                
+                // Initialize with one service row
+                const servicesTbody = document.getElementById('services-tbody');
+                servicesTbody.innerHTML = '';
+                addServiceRow();
+                
+                // Set default status to Pending
+                document.getElementById('billing-status').value = 'Pending';
+                
+                // Reset billing summary
+                updateBillingTotals();
+            });
+        }
+        
+        // Set up add service button
+        const addServiceBtn = document.getElementById('add-service-btn');
+        if (addServiceBtn) {
+            addServiceBtn.addEventListener('click', function() {
+                addServiceRow();
+            });
+        }
+        
+        // Set up service row event delegation
+        const servicesTbody = document.getElementById('services-tbody');
+        if (servicesTbody) {
+            servicesTbody.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-service-btn') || 
+                    e.target.parentElement.classList.contains('remove-service-btn')) {
+                    const row = e.target.closest('.service-row');
+                    if (servicesTbody.querySelectorAll('.service-row').length > 1) {
+                        row.remove();
+                        updateBillingTotals();
+                    }
+                }
+            });
+            
+            servicesTbody.addEventListener('input', function(e) {
+                if (e.target.classList.contains('service-quantity') || 
+                    e.target.classList.contains('service-price')) {
+                    const row = e.target.closest('.service-row');
+                    updateServiceRowAmount(row);
+                    updateBillingTotals();
+                }
+            });
+        }
+        
+        // Set up tax and discount rate inputs
+        const taxRateInput = document.getElementById('billing-tax-rate');
+        const discountRateInput = document.getElementById('billing-discount-rate');
+        
+        if (taxRateInput) {
+            taxRateInput.addEventListener('input', function() {
+                updateBillingTotals();
+            });
+        }
+        
+        if (discountRateInput) {
+            discountRateInput.addEventListener('input', function() {
+                updateBillingTotals();
+            });
+        }
+        
+        // Set up paid amount input
+        const paidAmountInput = document.getElementById('billing-paid-amount');
+        if (paidAmountInput) {
+            paidAmountInput.addEventListener('input', function() {
+                const total = parseFloat(document.getElementById('billing-total').textContent.replace('$', '')) || 0;
+                const paidAmount = parseFloat(this.value) || 0;
+                
+                // Auto-update status based on paid amount
+                const statusSelect = document.getElementById('billing-status');
+                if (paidAmount <= 0) {
+                    statusSelect.value = 'Pending';
+                } else if (paidAmount < total) {
+                    statusSelect.value = 'Partially Paid';
+                } else if (paidAmount >= total) {
+                    statusSelect.value = 'Paid';
+                }
+            });
+        }
+        
+        // Set up print bill button
+        const printBillBtn = document.getElementById('print-bill-btn');
+        if (printBillBtn) {
+            printBillBtn.addEventListener('click', function() {
+                printBill();
+            });
+        }
+        
+        // Set up edit bill button
+        const editBillBtn = document.getElementById('edit-bill-btn');
+        if (editBillBtn) {
+            editBillBtn.addEventListener('click', function() {
+                const billId = document.getElementById('view-bill-id').textContent;
+                document.getElementById('bill-view-modal').classList.remove('active');
+                document.getElementById('modal-container').classList.remove('active');
+                editBill(billId);
+            });
+        }
+        
+        // Set up record payment button
+        const recordPaymentBtn = document.getElementById('record-payment-btn');
+        if (recordPaymentBtn) {
+            recordPaymentBtn.addEventListener('click', function() {
+                const billId = document.getElementById('view-bill-id').textContent;
+                const totalAmount = parseFloat(document.getElementById('view-bill-total').textContent.replace('$', '')) || 0;
+                const paidAmount = parseFloat(document.getElementById('view-bill-paid').textContent.replace('$', '')) || 0;
+                const balanceAmount = parseFloat(document.getElementById('view-bill-balance').textContent.replace('$', '')) || 0;
+                
+                document.getElementById('bill-view-modal').classList.remove('active');
+                openModal('payment-modal');
+                
+                document.getElementById('payment-bill-id').value = billId;
+                document.getElementById('payment-total-amount').value = totalAmount.toFixed(2);
+                document.getElementById('payment-paid-amount').value = paidAmount.toFixed(2);
+                document.getElementById('payment-balance').value = balanceAmount.toFixed(2);
+                document.getElementById('payment-amount').value = balanceAmount.toFixed(2);
+                document.getElementById('payment-amount').max = balanceAmount.toFixed(2);
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('payment-date').value = today;
+            });
+        }
+        
+        // Set up filter buttons
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', function() {
+                applyBillingFilters();
+            });
+        }
+        
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                clearBillingFilters();
+            });
+        }
+        
+        // Set up export buttons
+        const exportCsvBtn = document.getElementById('export-billing-csv');
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportBillingToCSV();
+            });
+        }
+        
+        const exportExcelBtn = document.getElementById('export-billing-excel');
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exportBillingToExcel();
+            });
+        }
+    });
+    
+    // Function to add a new service row
+    function addServiceRow() {
+        const servicesTbody = document.getElementById('services-tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = 'service-row';
+        
+        newRow.innerHTML = `
+            <td>
+                <select class="form-control service-name" required>
+                    <option value="">Select Service</option>
+                    <option value="Consultation">Consultation</option>
+                    <option value="Lab Test">Lab Test</option>
+                    <option value="X-Ray">X-Ray</option>
+                    <option value="MRI Scan">MRI Scan</option>
+                    <option value="CT Scan">CT Scan</option>
+                    <option value="Ultrasound">Ultrasound</option>
+                    <option value="ECG">ECG</option>
+                    <option value="Vaccination">Vaccination</option>
+                    <option value="Surgery">Surgery</option>
+                    <option value="Medication">Medication</option>
+                    <option value="Physical Therapy">Physical Therapy</option>
+                    <option value="Dental Procedure">Dental Procedure</option>
+                    <option value="Other">Other</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control service-description">
+            </td>
+            <td>
+                <input type="number" class="form-control service-quantity" value="1" min="1" required>
+            </td>
+            <td>
+                <input type="number" class="form-control service-price" value="0.00" min="0" step="0.01" required>
+            </td>
+            <td>
+                <input type="number" class="form-control service-amount" value="0.00" readonly>
+            </td>
+            <td>
+                <button type="button" class="btn danger remove-service-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        servicesTbody.appendChild(newRow);
+        
+        // Set up event listeners for the new row
+        const quantityInput = newRow.querySelector('.service-quantity');
+        const priceInput = newRow.querySelector('.service-price');
+        
+        quantityInput.addEventListener('input', function() {
+            updateServiceRowAmount(newRow);
+            updateBillingTotals();
+        });
+        
+        priceInput.addEventListener('input', function() {
+            updateServiceRowAmount(newRow);
+            updateBillingTotals();
+        });
+    }
+    
+    // Function to update a service row amount
+    function updateServiceRowAmount(row) {
+        const quantity = parseFloat(row.querySelector('.service-quantity').value) || 0;
+        const price = parseFloat(row.querySelector('.service-price').value) || 0;
+        const amount = quantity * price;
+        
+        row.querySelector('.service-amount').value = amount.toFixed(2);
+    }
+    
+    // Function to update billing totals
+    function updateBillingTotals() {
+        // Calculate subtotal
+        let subtotal = 0;
+        const serviceRows = document.querySelectorAll('.service-row');
+        
+        serviceRows.forEach(row => {
+            subtotal += parseFloat(row.querySelector('.service-amount').value) || 0;
+        });
+        
+        // Calculate tax and discount
+        const taxRate = parseFloat(document.getElementById('billing-tax-rate').value) || 0;
+        const discountRate = parseFloat(document.getElementById('billing-discount-rate').value) || 0;
+        
+        const taxAmount = subtotal * (taxRate / 100);
+        const discountAmount = subtotal * (discountRate / 100);
+        
+        // Calculate total
+        const total = subtotal + taxAmount - discountAmount;
+        
+        // Update display
+        document.getElementById('billing-subtotal').textContent = '$' + subtotal.toFixed(2);
+        document.getElementById('billing-tax-amount').textContent = '$' + taxAmount.toFixed(2);
+        document.getElementById('billing-discount-amount').textContent = '$' + discountAmount.toFixed(2);
+        document.getElementById('billing-total').textContent = '$' + total.toFixed(2);
+        
+        // Update paid amount max
+        const paidAmountInput = document.getElementById('billing-paid-amount');
+        if (paidAmountInput) {
+            paidAmountInput.max = total.toFixed(2);
+        }
+    }
+    
+    // Function to print bill
+    function printBill() {
+        const printContents = document.getElementById('bill-printable-area').innerHTML;
+        const originalContents = document.body.innerHTML;
+        
+        document.body.innerHTML = `
+            <div class="print-container">
+                ${printContents}
+            </div>
+            <style>
+                @media print {
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .print-container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+                    .bill-header {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 30px;
+                    }
+                    .bill-patient-info {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 20px;
+                    }
+                    .services-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 20px;
+                    }
+                    .services-table th, .services-table td {
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                    .services-table th {
+                        background-color: #f2f2f2;
+                    }
+                    .bill-summary {
+                        width: 50%;
+                        margin-left: auto;
+                        margin-bottom: 30px;
+                    }
+                    .summary-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 5px 0;
+                    }
+                    .summary-row.total {
+                        font-weight: bold;
+                        border-top: 1px solid #ddd;
+                        border-bottom: 1px solid #ddd;
+                        padding: 10px 0;
+                    }
+                    .bill-footer {
+                        margin-top: 50px;
+                        text-align: center;
+                        color: #666;
+                    }
+                    .non-printable {
+                        display: none;
+                    }
+                }
+            </style>
+        `;
+        
+        window.print();
+        document.body.innerHTML = originalContents;
+        
+        // Reattach event listeners after printing
+        setTimeout(function() {
+            location.reload();
+        }, 1000);
+    }
+</script>
