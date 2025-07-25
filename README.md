@@ -3,6 +3,20 @@
 ## Overview
 This Hospital Management System is a web-based application that uses a spreadsheet-like database to manage hospital operations. It provides modules for patient management, appointment scheduling, staff management, billing, and reporting.
 
+## Images
+
+<img width="1919" height="903" alt="image" src="https://github.com/user-attachments/assets/e94da218-8833-4fc3-afa1-bd8b49dbce47" />
+
+<img width="1916" height="903" alt="image" src="https://github.com/user-attachments/assets/d735f70e-4628-4f55-8fb6-7e6d66e375f4" />
+
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/65149b42-3961-470c-9d44-4fbc1a1577e2" />
+
+<img width="1919" height="911" alt="image" src="https://github.com/user-attachments/assets/24d749aa-593a-4d55-9f9b-9995cc8235a8" />
+
+<img width="1918" height="895" alt="image" src="https://github.com/user-attachments/assets/df2ab7ee-faf4-415e-a4d4-f6e1bd7d6c68" />
+
+<img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/29cb81d8-ef85-42c0-9da7-781746d0a712" />
+
 ## Features
 
 ### Dashboard
